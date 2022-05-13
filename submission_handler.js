@@ -4,16 +4,16 @@ const API_SECRET_KEY = '';
 function onFormSubmit(e) {
   let person = parseSubmission(e);
   
-  let full = person['chosen_first'];
+  let full = person['chosen_first'].trim();
   if (person.hasOwnProperty('chosen_middle'))
-    full += ' ' + person['chosen_middle'];
-  full += ' ' + person['chosen_last'];
+    full += ' ' + person['chosen_middle'].trim();
+  full += ' ' + person['chosen_last'].trim();
   person['full'] = full;
   
-  let legal = person['legal_first'];
-  if (person.hasOwnProperty('legan_middle'))
-    legal += ' ' + person['legan_middle'];
-  legal += ' ' + person['legan_last'];
+  let legal = person['legal_first'].trim();
+  if (person.hasOwnProperty('legal_middle'))
+    legal += ' ' + person['legal_middle'].trim();
+  legal += ' ' + person['legal_last'].trim();
   person['legal'] = legal;
   
   person['full_address'] = person['address'] + ', ' + person['city'] + ', ' + person['state'] + ' ' + person['zip'];
@@ -22,6 +22,7 @@ function onFormSubmit(e) {
   if (!folder)
     folder = createFolderByName(full);
 
+  console.log(person);
   genDoc(folder, person, generateAnswersTable(e), e.response.getTimestamp());
   genForms(folder, person);
 }
@@ -132,7 +133,6 @@ function parseSubmission(e) {
 }
 
 function genForms(folder, person) {
-  console.log(person);
   let options = {
     method: 'post',
     payload: person,

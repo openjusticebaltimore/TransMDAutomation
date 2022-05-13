@@ -24,18 +24,18 @@ def genpdf():
     birth_state = request.values['birth_state']
     birth_county = request.values['birth_county']
     birth_country = request.values['birth_country']
-    birth_first = request.values['birth_first']
-    birth_middle = request.values['birth_middle']
-    birth_last = request.values['birth_last']
+    birth_first = request.values.get('birth_first')
+    birth_middle = request.values.get('birth_middle')
+    birth_last = request.values.get('birth_last')
     other_legal_1 = request.values.get('other_legal_1')
     other_legal_1_reason = request.values.get('other_legal_1_reason')
     other_legal_2 = request.values.get('other_legal_2')
     other_legal_2_reason = request.values.get('other_legal_2_reason')
     never_registered_so = request.values.get('never_registered_so')
-    registered_so_names = request.values['registered_so_names']
+    registered_so_names = request.values.get('registered_so_names')
     email = request.values['email']
     phone = request.values.get('phone')
-    birth_certificate = request.values['birth_certificate']
+    birth_certificate = request.values.get('birth_certificate')
 
     chosen = chosen_first
     if chosen_middle:
@@ -47,10 +47,12 @@ def genpdf():
         legal += ' ' + legal_middle
     legal += ' ' + legal_last
 
-    birth_name = birth_first
-    if birth_middle:
-        birth_name += ' ' + birth_middle
-    birth_name += ' ' + birth_last
+    birth_name = ''
+    if birth_first and birth_last:
+        birth_name = birth_first
+        if birth_middle:
+            birth_name += ' ' + birth_middle
+        birth_name += ' ' + birth_last
 
     if county == 'Allegany County':
         court_address = '30 Washington St, Cumberland, MD 21502'
