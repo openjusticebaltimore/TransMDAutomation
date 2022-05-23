@@ -27,6 +27,7 @@ def genpdf():
     birth_first = request.values.get('birth_first')
     birth_middle = request.values.get('birth_middle')
     birth_last = request.values.get('birth_last')
+    other_legal_0_reason = request.values.get('other_legal_0_reason')
     other_legal_1 = request.values.get('other_legal_1')
     other_legal_1_reason = request.values.get('other_legal_1_reason')
     other_legal_2 = request.values.get('other_legal_2')
@@ -116,14 +117,17 @@ def genpdf():
         'Email': email,
         'Date': datetime.now().date().isoformat()   
     }
+    if other_legal_0_reason:
+        answers['Name changed to 1'] = legal
+        answers['Reason 1'] = other_legal_0_reason
     if other_legal_1:
-        answers['Name changed to 1'] = other_legal_1
+        answers['Name changed to 2'] = other_legal_1
     if other_legal_2:
-        answers['Name changed to 2'] = other_legal_2
+        answers['Name changed to 3'] = other_legal_2
     if other_legal_1_reason:
-        answers['Reason 1'] = other_legal_1_reason
+        answers['Reason 2'] = other_legal_1_reason
     if other_legal_2_reason:
-        answers['Reason 2'] = other_legal_2_reason
+        answers['Reason 3'] = other_legal_2_reason
     if never_registered_so and never_registered_so.lower() == 'true':
         answers['I have never registered as a sexual offender'] = 'On'
     if registered_so_names:
@@ -142,14 +146,14 @@ def genpdf():
             'Check Box1': 'Yes',
             'Date of Birth': dob
         }
-        waco_form = pypdftk.fill_form('/app/data/WaCoDecreeForm2021.pdf', answers)
-        main_form = pypdftk.fill_form('/app/data/MDAdultNameChange2022.pdf', answers)
+        waco_form = pypdftk.fill_form('/app/data/WaCoDecreeForm2021.pdf', answers, flatten=False)
+        main_form = pypdftk.fill_form('/app/data/MDAdultNameChange2022.pdf', answers, flatten=False)
         tmp = pypdftk.concat([main_form, waco_form])
     if county == 'Montgomery County' or county == 'Frederick County' \
             or county == 'Harford County' or county == "St. Mary's County":
-        tmp = pypdftk.fill_form('/app/data/MDAdultNameChange2022Posting.pdf', answers)
+        tmp = pypdftk.fill_form('/app/data/MDAdultNameChange2022Posting.pdf', answers, flatten=False)
     else:
-        tmp = pypdftk.fill_form('/app/data/MDAdultNameChange2022.pdf', answers)
+        tmp = pypdftk.fill_form('/app/data/MDAdultNameChange2022.pdf', answers, flatten=False)
 
     ret = send_file(tmp, mimetype='application/pdf', download_name=f'Name Change Form {chosen}.pdf')
     os.remove(tmp)
