@@ -37,6 +37,7 @@ def genpdf():
     email = request.values['email']
     phone = request.values.get('phone')
     birth_certificate = request.values.get('birth_certificate')
+    cost_assistance = request.values['cost_assistance']
 
     chosen = chosen_first
     if chosen_middle:
@@ -57,52 +58,79 @@ def genpdf():
 
     if county == 'Allegany County':
         court_address = '30 Washington St, Cumberland, MD 21502'
+        money_form = 'AlleganyCheckClerkPetitionv2.pdf'
     elif county == 'Anne Arundel County':
         court_address = '8 Church Circle, Annapolis, MD 21401'
+        money_form = 'AnneArundelCountyCheckClerkPetitionv2.pdf'
     elif county == 'Baltimore City':
         court_address = '111 N Calvert St, Room 109 Family Department, Baltimore, MD 21202'
+        if cost_assistance == 'true':
+            money_form = 'BaltimoreCityCheckPetitionv2.pdf'
+        else:
+            money_form = 'BaltimoreCityMoneyOrderPetitionv2.pdf'
     elif county == 'Baltimore County':
         court_address = '401 Bosley Ave, 2nd Floor Family Department, Towson, MD 21204'
+        money_form = 'BaltimoreCountyCheckClerkPetitionv2.pdf'
     elif county == 'Calvert County':
         court_address = '175 Main St, Prince Frederick, MD 20678'
+        money_form = 'CalvertCountyCheckClerkPetitionv2.pdf'
     elif county == 'Caroline County':
         court_address = '109 Market St, Denton, MD 21629'
+        money_form = 'CarolineCountyCheckClerkPetitionv2.pdf'
     elif county == 'Carroll County':
         court_address = '55 N Court St, Westminster, MD 21157'
+        money_form = 'CarrollCountyCheckClerkPetitionv2.pdf'
     elif county == 'Cecil County':
         court_address = '129 E Main St, Elkton, MD 21921'
+        money_form = 'CecilCountyCheckClerkPetitionv2.pdf'
     elif county == 'Charles County':
         court_address = '200 Charles St, La Plata, MD 20646'
+        money_form = 'CharlesCountyCheckClerkPetitionv2.pdf'
     elif county == 'Dorchester County':
         court_address = '206 High St # 1, Cambridge, MD 21613'
+        money_form = 'DorchesterCountyCheckClerkPetitionv2.pdf'
     elif county == 'Frederick County':
         court_address = '100 W Patrick St, Frederick, MD 21701'
+        money_form = 'FrederickCountyCheckClerkPetitionv2.pdf'
     elif county == 'Garrett County':
         court_address = '203 S 4th St #109, Oakland, MD 21550'
+        money_form = 'GarrettCountyCheckClerkPetitionv2.pdf'
     elif county == 'Harford County':
         court_address = '20 W Courtland St, Bel Air, MD 21014'
+        money_form = 'HarfordCountyCheckClerkPetitionv2.pdf'
     elif county == 'Howard County':
         court_address = '9250 Judicial Way, Suite 1900, Ellicott City, MD 21043'
+        money_form = 'HowardCountyCheckClerkPetitionv2.pdf'
     elif county == 'Kent County':
         court_address = '103 N Cross St, Chestertown, MD 21620'
+        money_form = 'KentCountyCheckClerkPetitionv2.pdf'
     elif county == 'Montgomery County':
         court_address = '50 Maryland Ave, Room 1460, Rockville, MD 20850'
+        money_form = 'MontgomeryCountyCheckClerkPetitionv2.pdf'
     elif county == 'Prince George\'s County':
         court_address = '14735 Main St, Room D-1033, Upper Marlboro, MD 20772'
+        money_form = 'PrinceGeorgesCountyCheckClerkPetitionv2.pdf'
     elif county == 'Queen Anne\'s County':
         court_address = '200 N Commerce St, Centreville, MD 21617'
+        money_form = 'QueenAnnesCountyCheckClerkPetitionv2.pdf'
     elif county == 'Somerset County':
         court_address = '30512 Prince William St, Princess Anne, MD 21853'
+        money_form = 'SomersetCountyCheckClerkPetitionv2.pdf'
     elif county == 'St. Mary\'s County':
         court_address = '41605 Court House Dr, Leonardtown, MD 20650'
+        money_form = 'StMarysCoCheckClerkPetitionv2.pdf'
     elif county == 'Talbot County':
         court_address = '11 N Washington St # 16, Easton, MD 21601'
+        money_form = 'TalbotCountyCheckClerkPetitionv2.pdf'
     elif county == 'Washington County':
         court_address = '24 Summit Ave, Hagerstown, MD 21740'
+        money_form = 'WashingtonCountyCheckClerkPetitionv2.pdf'
     elif county == 'Wicomico County':
         court_address = '101 N Division St #105, Salisbury, MD 21801'
+        money_form = 'WicomicoCountyCheckClerkPetitionv2.pdf'
     elif county == 'Worcester County':
         court_address = '1 W Market St, Snow Hill, MD 21863'
+        money_form = 'WorcesterCountyCheckClerkPetitionv2.pdf'
 
     answers = {
         'Court Address': court_address,
@@ -146,15 +174,18 @@ def genpdf():
             'Check Box1': 'Yes',
             'Date of Birth': dob
         }
-        waco_form = pypdftk.fill_form('/app/data/WaCoDecreeForm2021.pdf', answers, flatten=False)
-        main_form = pypdftk.fill_form('/app/data/MDAdultNameChange2022.pdf', answers, flatten=False)
+        waco_form = pypdftk.fill_form('/app/endpoints/transmd/forms/WaCoDecreeForm2021.pdf', answers, flatten=False)
+        main_form = pypdftk.fill_form('/app/endpoints/transmd/forms/MDAdultNameChange2022.pdf', answers, flatten=False)
         tmp = pypdftk.concat([main_form, waco_form])
     if county == 'Montgomery County' or county == 'Frederick County' \
             or county == 'Harford County' or county == "St. Mary's County":
-        tmp = pypdftk.fill_form('/app/data/MDAdultNameChange2022Posting.pdf', answers, flatten=False)
+        tmp = pypdftk.fill_form('/app/endpoints/transmd/forms/MDAdultNameChange2022Posting.pdf', answers, flatten=False)
     else:
-        tmp = pypdftk.fill_form('/app/data/MDAdultNameChange2022.pdf', answers, flatten=False)
+        tmp = pypdftk.fill_form('/app/endpoints/transmd/forms/MDAdultNameChange2022.pdf', answers, flatten=False)
+    
+    money = pypdftk.fill_form('/app/endpoints/transmd/money_forms/' + money_form, answers, flatten=False)
+    final = pypdftk.concat([tmp, money])
 
-    ret = send_file(tmp, mimetype='application/pdf', download_name=f'Name Change Form {chosen}.pdf')
+    ret = send_file(final, mimetype='application/pdf', download_name=f'Name Change Form {chosen}.pdf')
     os.remove(tmp)
     return ret

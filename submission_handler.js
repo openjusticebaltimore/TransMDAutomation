@@ -5,13 +5,13 @@ function onFormSubmit(e) {
   let person = parseSubmission(e);
   
   let full = person['chosen_first'].trim();
-  if (person.hasOwnProperty('chosen_middle'))
+  if (person.hasOwnProperty('chosen_middle') && person['chosen_middle'].length > 0)
     full += ' ' + person['chosen_middle'].trim();
   full += ' ' + person['chosen_last'].trim();
   person['full'] = full;
   
   let legal = person['legal_first'].trim();
-  if (person.hasOwnProperty('legal_middle'))
+  if (person.hasOwnProperty('legal_middle') && person['legal_middle'].length > 0)
     legal += ' ' + person['legal_middle'].trim();
   legal += ' ' + person['legal_last'].trim();
   person['legal'] = legal;
@@ -76,6 +76,9 @@ function parseSubmission(e) {
       case 'Legal last name at birth':
         p['birth_last'] = response.getResponse();
         break;
+      case 'What was your reason for changing to your current name':
+        p['other_legal_0_reason'] = response.getResponse();
+        break;
       case 'Other legal name 1':
         p['other_legal_1'] = response.getResponse();
         break;
@@ -126,6 +129,12 @@ function parseSubmission(e) {
         break;
       case 'What pronouns do you use? ':
         p['pronouns'] = response.getResponse();
+        break;
+      case 'Can you afford the cost of your petition ($165) and other documents ($80-$300), or do you need assistance from our program?':
+        if (response.getResponse() == 'Yes - I can afford those costs')
+          p['cost_assistance'] = 'false';
+        else
+          p['cost_assistance'] = 'true';
         break;
     }
   }
@@ -244,6 +253,7 @@ function test_genForms() {
     birth_first: 'legalfirst',
     birth_middle: 'legalmiddle',
     birth_last: 'legallast',
+    other_legal_0_reason: 'marriage',
     other_legal_1: 'other legal',
     other_legal_1_reason: 'test',
     other_legal_2: 'other legal 2',
@@ -259,7 +269,8 @@ function test_genForms() {
     county: 'Frederick County',
     never_registered_so: 'true',
     registered_so_names: 'registered name',
-    birth_certificate: 'Yes - I want to change my name on my birth certificate'
+    birth_certificate: 'Yes - I want to change my name on my birth certificate',
+    cost_assistance: 'true'
   };
   genForms(folder, person);
 }
@@ -330,7 +341,7 @@ function test_genDoc() {
     [ 'Legal middle name at birth', 'legalmiddle' ],
     [ 'Legal last name at birth', 'legallast' ],
     [ 'What was your reason for changing to your current name',
-      'test' ],
+      'marriage' ],
     [ 'Have you changed your name more than once', 'Yes' ],
     [ 'Other legal name 1', 'other legal' ],
     [ 'Reason for changing to legal name 1', 'test' ],
