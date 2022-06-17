@@ -1,5 +1,3 @@
-// This script is meant to be attached to submission form response spreadsheet
-
 const CLIENT_FOLDER_ID = '';
 const API_SECRET_KEY = '';
 
@@ -183,6 +181,12 @@ function parseSubmission(map) {
         break;
       case 'What pronouns do you use? ':
         p['pronouns'] = map[question];
+        break;
+      case 'Can you afford the cost of your petition ($165) and other documents ($80-$300), or do you need assistance from our program?':
+        if (map[question] == 'Yes - I can afford those costs')
+          p['cost_assistance'] = 'false';
+        else
+          p['cost_assistance'] = 'true';
         break;
     }
   }

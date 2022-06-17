@@ -49,7 +49,7 @@ def genpdf():
         legal += ' ' + legal_middle
     legal += ' ' + legal_last
 
-    birth_name = ''
+    birth_name = legal
     if birth_first and birth_last:
         birth_name = birth_first
         if birth_middle:
@@ -168,13 +168,13 @@ def genpdf():
     
     if county == 'Washington County':
         court_address = '24 Summit Ave, Hagerstown, MD 21740'
-        answers = {
+        waco_answers = {
             'Your current legal name': legal,
             'Name you want to be known as': chosen,
             'Check Box1': 'Yes',
             'Date of Birth': dob
         }
-        waco_form = pypdftk.fill_form('/app/endpoints/transmd/forms/WaCoDecreeForm2021.pdf', answers, flatten=False)
+        waco_form = pypdftk.fill_form('/app/endpoints/transmd/forms/WaCoDecreeForm2021.pdf', waco_answers, flatten=False)
         main_form = pypdftk.fill_form('/app/endpoints/transmd/forms/MDAdultNameChange2022.pdf', answers, flatten=False)
         tmp = pypdftk.concat([main_form, waco_form])
     if county == 'Montgomery County' or county == 'Frederick County' \
@@ -184,7 +184,7 @@ def genpdf():
         tmp = pypdftk.fill_form('/app/endpoints/transmd/forms/MDAdultNameChange2022.pdf', answers, flatten=False)
     
     money = pypdftk.fill_form('/app/endpoints/transmd/money_forms/' + money_form, answers, flatten=False)
-    final = pypdftk.concat([tmp, money])
+    final = pypdftk.concat([money, tmp])
 
     ret = send_file(final, mimetype='application/pdf', download_name=f'Name Change Form {chosen}.pdf')
     os.remove(tmp)
